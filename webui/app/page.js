@@ -59,8 +59,8 @@ export default function HomePage() {
     await refreshPeers();
   }
 
-  function downloadConfig(publicKey) {
-    window.open(`/api/peers/${encodeURIComponent(publicKey)}/config`, "_blank");
+  function downloadConfig(name) {
+    window.open(`/api/peers/by-name/${encodeURIComponent(name)}/config`, "_blank");
   }
 
   function openQr(publicKey) {
@@ -111,7 +111,7 @@ export default function HomePage() {
             <div className="muted">IP: {p.address}</div>
             <div className="muted">PublicKey: {p.publicKey}</div>
             <div className="row" style={{ marginTop: 8 }}>
-              <button className="secondary" onClick={() => downloadConfig(p.publicKey)}>Скачать .conf</button>
+              <button className="secondary" onClick={() => downloadConfig(p.name)}>Скачать .conf</button>
               <button className="secondary" onClick={() => openQr(p.publicKey)}>QR</button>
               <button onClick={() => removePeer(p.publicKey)}>Удалить</button>
             </div>
