@@ -1,4 +1,4 @@
-import { awgFetch } from "../../../../../_lib/awg";
+import { awgFetch } from "../../../../_lib/awg";
 
 export async function GET(_request, { params }) {
   const targetName = (params.name || "").trim();
