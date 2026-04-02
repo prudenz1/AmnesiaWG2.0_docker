@@ -50,7 +50,9 @@ export default function HomePage() {
   }
 
   async function removePeer(publicKey) {
-    const res = await fetch(`/api/peers/${encodeURIComponent(publicKey)}`, { method: "DELETE" });
+    const res = await fetch(`/api/peers?publicKey=${encodeURIComponent(publicKey)}`, {
+      method: "DELETE"
+    });
     if (!res.ok) {
       setMessage(`Ошибка удаления: ${await res.text()}`);
       return;
@@ -64,7 +66,7 @@ export default function HomePage() {
   }
 
   function openQr(publicKey) {
-    window.open(`/api/peers/${encodeURIComponent(publicKey)}/qr`, "_blank");
+    window.open(`/api/peers/qr?publicKey=${encodeURIComponent(publicKey)}`, "_blank");
   }
 
   useEffect(() => {

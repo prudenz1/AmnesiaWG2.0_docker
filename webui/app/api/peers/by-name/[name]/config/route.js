@@ -20,9 +20,10 @@ export async function GET(_request, { params }) {
     return new Response("peer not found", { status: 404 });
   }
 
-  const cfgRes = await awgFetch(`/api/peers/${encodeURIComponent(peer.publicKey)}/config`, {
-    headers: { Accept: "text/plain" }
-  });
+  const cfgRes = await awgFetch(
+    `/api/peers/config?publicKey=${encodeURIComponent(peer.publicKey)}`,
+    { headers: { Accept: "text/plain" } }
+  );
   const text = await cfgRes.text();
   return new Response(text, {
     status: cfgRes.status,

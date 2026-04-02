@@ -50,7 +50,7 @@ func main() {
 	wgConfig := flag.String("wg-config", "/etc/amneziawg/wg0.conf", "wireguard config path")
 	peersDB := flag.String("peers-db", "/var/lib/amneziawg/peers.json", "peers db path")
 	serverURL := flag.String("server-url", "127.0.0.1", "public server address")
-	serverPort := flag.String("server-port", "51820", "public udp port")
+	serverPort := flag.String("server-port", "51840", "public udp port")
 	dns := flag.String("dns", "1.1.1.1", "client dns")
 	subnetStr := flag.String("subnet", "10.13.13.0/24", "vpn subnet")
 	flag.Parse()
@@ -78,6 +78,8 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/status", s.auth(s.handleStatus))
 	mux.HandleFunc("/api/peers", s.auth(s.handlePeers))
+	mux.HandleFunc("/api/peers/config", s.auth(s.handlePeerConfigByQuery))
+	mux.HandleFunc("/api/peers/qr", s.auth(s.handlePeerQRByQuery))
 	mux.HandleFunc("/api/reload", s.auth(s.handleReload))
 	mux.HandleFunc("/api/peers/", s.auth(s.handlePeerRoutes))
 
@@ -131,9 +133,42 @@ func (s *server) handlePeers(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusOK, peers)
 	case http.MethodPost:
 		s.createPeer(w, r)
+	case http.MethodDelete:
+		pub := strings.TrimSpace(r.URL.Query().Get("publicKey"))
+		if pub == "" {
+			http.Error(w, "publicKey is required", http.StatusBadRequest)
+			return
+		}
+		s.deletePeer(w, pub)
 	default:
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 	}
+}
+
+func (s *server) handlePeerConfigByQuery(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	pub := strings.TrimSpace(r.URL.Query().Get("publicKey"))
+	if pub == "" {
+		http.Error(w, "publicKey is required", http.StatusBadRequest)
+		return
+	}
+	s.getPeerConfig(w, pub)
+}
+
+func (s *server) handlePeerQRByQuery(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	pub := strings.TrimSpace(r.URL.Query().Get("publicKey"))
+	if pub == "" {
+		http.Error(w, "publicKey is required", http.StatusBadRequest)
+		return
+	}
+	s.getPeerQR(w, pub)
 }
 
 func (s *server) handlePeerRoutes(w http.ResponseWriter, r *http.Request) {

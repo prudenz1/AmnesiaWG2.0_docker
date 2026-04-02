@@ -103,7 +103,7 @@ curl -sS "http://127.0.0.1/api/peers/<PUBLIC_KEY>/qr" \
 
 ## Безопасность и git
 
-- Внешне открыты только `80/tcp` (`nginx`) и `51820/udp` (VPN).
+- Внешне открыты только `80/tcp` (`nginx`) и `51840/udp` (VPN).
 - `amneziawg` API порт `8080` и `webui` порт `3000` доступны только внутри docker-сети.
 - `nginx` добавляет безопасные заголовки и базовый rate limit.
 - В `.gitignore` исключены чувствительные файлы (`config/wg0.conf`, содержимое `state/`, `.env`).

@@ -36,6 +36,6 @@ COPY entrypoint.sh /entrypoint.sh
 
 RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh /usr/local/bin/awg /usr/local/bin/awg-quick /usr/local/bin/amneziawg-go /usr/local/bin/awg-api
 
-EXPOSE 51820/udp 8080/tcp
+EXPOSE 51840/udp 8080/tcp
 
 ENTRYPOINT ["/entrypoint.sh"]

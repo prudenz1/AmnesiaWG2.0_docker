@@ -9,7 +9,7 @@ services:
       - /dev/net/tun:/dev/net/tun
     environment:
       - SERVER_URL=${SERVER_URL:-your.server.ip}
-      - SERVER_PORT=${SERVER_PORT:-51820}
+      - SERVER_PORT=${SERVER_PORT:-51840}
       - API_TOKEN=${API_TOKEN:-change-me}
       - DNS=${DNS:-1.1.1.1}
       - SUBNET=${SUBNET:-10.13.13.0/24}
@@ -33,7 +33,7 @@ services:
       - ./config:/etc/amnezia/amneziawg
       - ./state:/var/lib/amneziawg
     ports:
-      - "51820:51820/udp"
+      - "51840:51840/udp"
     sysctls:
       - net.ipv4.ip_forward=1
       - net.ipv4.conf.all.src_valid_mark=1
