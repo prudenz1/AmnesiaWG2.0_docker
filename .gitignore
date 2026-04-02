@@ -1,0 +1,21 @@
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+
+# Runtime sensitive state (contains private keys, peers, etc.)
+config/wg0.conf
+state/*
+!state/.gitkeep
+
+# Node / build artifacts
+webui/node_modules/
+webui/.next/
+webui/out/
+webui/npm-debug.log*
+webui/yarn-error.log*
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.cursor/

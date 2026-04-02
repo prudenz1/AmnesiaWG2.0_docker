@@ -1,0 +1,69 @@
+services:
+  amneziawg:
+    build: .
+    container_name: amneziawg
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - SERVER_URL=${SERVER_URL:-your.server.ip}
+      - SERVER_PORT=${SERVER_PORT:-51820}
+      - API_TOKEN=${API_TOKEN:-change-me}
+      - DNS=${DNS:-1.1.1.1}
+      - SUBNET=${SUBNET:-10.13.13.0/24}
+      - AWG_JC=${AWG_JC:-5}
+      - AWG_JMIN=${AWG_JMIN:-10}
+      - AWG_JMAX=${AWG_JMAX:-50}
+      - AWG_S1=${AWG_S1:-58}
+      - AWG_S2=${AWG_S2:-123}
+      - AWG_S3=${AWG_S3:-27}
+      - AWG_S4=${AWG_S4:-11}
+      - AWG_H1=${AWG_H1:-402635029-1611840891}
+      - AWG_H2=${AWG_H2:-2002448501-2133445208}
+      - AWG_H3=${AWG_H3:-2138059656-2141120869}
+      - AWG_H4=${AWG_H4:-2145854220-2147460034}
+      - AWG_I1=${AWG_I1:-}
+      - AWG_I2=${AWG_I2:-}
+      - AWG_I3=${AWG_I3:-}
+      - AWG_I4=${AWG_I4:-}
+      - AWG_I5=${AWG_I5:-}
+    volumes:
+      - ./config:/etc/amnezia/amneziawg
+      - ./state:/var/lib/amneziawg
+    ports:
+      - "51820:51820/udp"
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv6.conf.all.forwarding=1
+    restart: unless-stopped
+
+  webui:
+    build:
+      context: ./webui
+    container_name: amneziawg-webui
+    depends_on:
+      - amneziawg
+    environment:
+      - API_BASE_URL=http://amneziawg:8080
+      - API_TOKEN=${API_TOKEN:-change-me}
+    expose:
+      - "3000"
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: amneziawg-nginx
+    depends_on:
+      - webui
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+    restart: unless-stopped
